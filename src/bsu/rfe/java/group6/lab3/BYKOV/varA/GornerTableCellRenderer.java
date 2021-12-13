@@ -34,7 +34,7 @@ public class GornerTableCellRenderer implements TableCellRenderer{
         String formattedDouble = formatter.format(value);
 // Установить текст надписи равным строковому представлению числа
         label.setText(formattedDouble);
-        if ((col==0 || col==1 || col==2) && needle!=null && needle.equals(formattedDouble)) {
+        if ((col==1 || col==2) && needle!=null && needle.equals(formattedDouble)) {
             panel.setBackground(Color.RED);
         } else {
             panel.setBackground(Color.WHITE);
