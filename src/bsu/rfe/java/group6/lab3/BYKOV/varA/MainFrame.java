@@ -49,7 +49,7 @@ public class MainFrame extends JFrame {
     private GornerTableCellRenderer renderer = new GornerTableCellRenderer();
 
     private GornerTableModel data;
-
+    //вызов конструктора предка
     public MainFrame(Double[] coefficients) {super("Табулирование многочлена на отрезке по схеме Горнера");
         this.coefficients = coefficients;
         setSize(WIDTH, HEIGHT);
@@ -64,6 +64,7 @@ public class MainFrame extends JFrame {
         menuBar.add(tableMenu);
         JMenu help = new JMenu("Справка");
         menuBar.add(help);
+        // Создать новое "действие" по сохранению в текстовый файл
         Action saveToTextAction = new AbstractAction("Сохранить в текстовый файл") {
             public void actionPerformed(ActionEvent event) {
                 if (fileChooser == null) {
@@ -77,7 +78,7 @@ public class MainFrame extends JFrame {
         };
         saveToTextMenuItem = fileMenu.add(saveToTextAction);
         saveToTextMenuItem.setEnabled(false);
-
+// Создать новое "действие" по сохранению в текстовый файл
         Action saveToGraphicsAction = new AbstractAction("Сохранить данные для построения графика") {
             public void actionPerformed(ActionEvent event) {
                 if (fileChooser == null) {
@@ -91,15 +92,23 @@ public class MainFrame extends JFrame {
         };
         saveToGraphicsMenuItem = fileMenu.add(saveToGraphicsAction);
         saveToGraphicsMenuItem.setEnabled(false);
+        // Создать новое действие по поиску значений многочлена
         Action searchValueAction = new AbstractAction("Найти значение многочлена") {
-            public void actionPerformed(ActionEvent event) {String value = JOptionPane.showInputDialog(MainFrame.this, "Введите значение для поиска",
+            public void actionPerformed(ActionEvent event) {
+                // Запросить пользователя ввести искомую строку
+                String value = JOptionPane.showInputDialog(MainFrame.this, "Введите значение для поиска",
                     "Поиск значения", JOptionPane.QUESTION_MESSAGE);
+                // Установить введенное значение в качестве иголки
                 renderer.setNeedle(value);
+                // Обновить таблицу
                 getContentPane().repaint();
             }
         };
+        //Создать новое действие по поиску фамилии и группы автора программы
         Action aboutProgram = new AbstractAction("О программе") {
-            public void actionPerformed(ActionEvent e) {JOptionPane.showMessageDialog(MainFrame.this, "Быков Георгий, 6 группа",
+            public void actionPerformed(ActionEvent e) {
+                //Показ строки с именем и фамилией
+                JOptionPane.showMessageDialog(MainFrame.this, "Быков Георгий, 6 группа",
                     "Автор программы", JOptionPane.INFORMATION_MESSAGE);
             }
         };
@@ -107,6 +116,7 @@ public class MainFrame extends JFrame {
         AboutProgrammMenuItem.setEnabled(false);
         searchValueMenuItem = tableMenu.add(searchValueAction);
         searchValueMenuItem.setEnabled(false);
+        // Создать область с полями ввода
         JLabel labelForFrom = new JLabel("X изменяется на интервале от:");
         textFieldFrom = new JTextField("0.0", 10);
         textFieldFrom.setMaximumSize(textFieldFrom.getPreferredSize());
@@ -132,9 +142,12 @@ public class MainFrame extends JFrame {
         hboxRange.add(Box.createHorizontalStrut(10));
         hboxRange.add(textFieldStep);
         hboxRange.add(Box.createHorizontalGlue());
+        // Установить предпочтительный размер области равным удвоенному минимальному, чтобы при компоновке область совсем не сдавили
         hboxRange.setPreferredSize(new Dimension(new Double(hboxRange.getMaximumSize().getWidth()).intValue(),
                 new Double(hboxRange.getMinimumSize().getHeight()).intValue() * 2));
-        getContentPane().add(hboxRange, BorderLayout.SOUTH);
+        // Установить область в верхнюю часть компоновки
+        getContentPane().add(hboxRange, BorderLayout.NORTH);
+        // Создать кнопку "Вычислить"
         JButton buttonCalc = new JButton("Вычислить");
         buttonCalc.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
@@ -162,6 +175,7 @@ public class MainFrame extends JFrame {
                 }
             }
         });
+        // Создать кнопку "Очистить поля"
         JButton buttonReset = new JButton("Очистить поля");
         buttonReset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
@@ -177,6 +191,7 @@ public class MainFrame extends JFrame {
                 getContentPane().validate();
             }
         });
+        // Поместить созданные кнопки в контейнер
         Box hboxButtons = Box.createHorizontalBox();
         hboxButtons.setBorder(BorderFactory.createBevelBorder(1));
         hboxButtons.add(Box.createHorizontalGlue());
@@ -184,30 +199,36 @@ public class MainFrame extends JFrame {
         hboxButtons.add(Box.createHorizontalStrut(30));
         hboxButtons.add(buttonReset);
         hboxButtons.add(Box.createHorizontalGlue());
+        // Установить предпочтительный размер области равным удвоенному минимальному, чтобы при компоновке окна область совсем не сдавили
         hboxButtons.setPreferredSize(new Dimension(new
                 Double(hboxButtons.getMaximumSize().getWidth()).intValue(), new
                 Double(hboxButtons.getMinimumSize().getHeight()).intValue() * 2));
-        getContentPane().add(hboxButtons, BorderLayout.NORTH);
+        getContentPane().add(hboxButtons, BorderLayout.SOUTH);
         hBoxResult = Box.createHorizontalBox();
         hBoxResult.add(new JPanel());
         getContentPane().add(hBoxResult, BorderLayout.CENTER);
     }
     protected void saveToGraphicsFile(File selectedFile) {
         try {
+            // Создать новый байтовый поток вывода, направленный в указанный файл
             DataOutputStream out = new DataOutputStream(new
                     FileOutputStream(selectedFile));
+            // Записать в поток вывода попарно значение X в точке, значение многочлена в точке
 
         for (int i = 0; i < data.getRowCount(); i++) {
             out.writeDouble((Double) data.getValueAt(i, 0));
             out.writeDouble((Double) data.getValueAt(i, 1));
         }
+            // Закрыть поток вывода
             out.close();
         } catch (Exception e) {
         }
     }
     protected void saveToTextFile(File selectedFile) {
         try {
+            // Создать новый символьный поток вывода, направленный указанный файл
             PrintStream out = new PrintStream(selectedFile);
+            // Записать в поток вывода заголовочные сведения
             out.println("Результаты табулирования многочлена по схеме Горнера");
             out.print("Многочлен: ");
             for (int i = 0; i < coefficients.length; i++) {
@@ -220,10 +241,12 @@ public class MainFrame extends JFrame {
             out.println("Интервал от " + data.getFrom() + " до " +
                     data.getTo() + " с шагом " + data.getStep());
             out.println("====================================================");
+            // Записать в поток вывода значения в точках
             for (int i = 0; i < data.getRowCount(); i++) {
                 out.println("Значение в точке " + data.getValueAt(i, 0)
                         + " равно " + data.getValueAt(i, 1));
             }
+            // Закрыть поток
             out.close();
         } catch (FileNotFoundException e) {
         }
